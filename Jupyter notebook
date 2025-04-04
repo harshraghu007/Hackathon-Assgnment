@@ -1,0 +1,43 @@
+pip install pdfplumber pandas openpyxl
+pip install pdfminer.six pymupdf
+import fitz  # PyMuPDF
+import pandas as pd
+
+pdf_path = r"E:\Hackathon\test3 (1) (1).pdf"
+doc = fitz.open(pdf_path)
+
+all_tables = []
+
+for page_num in range(len(doc)):
+    page = doc.load_page(page_num)
+    text = page.get_text("text")
+    print(f"--- Page {page_num + 1} ---\n{text[:500]}")
+df = pd.DataFrame(data, columns=["Date", "Description", "Balance"])
+df.to_excel("parsed_bank_statement.xlsx", index=False)
+
+# Or save as CSV
+df.to_csv("parsed_bank_statement.csv", index=False)
+print(df.columns.tolist())
+df.columns = df.columns.str.strip() 
+df.rename(columns={"Amount ": "Amount"}, inplace=True)
+for i, row in enumerate(data):
+    if len(row) != 5:
+        print(f"Row {i} has {len(row)} columns: {row}")
+print("Columns in DataFrame:", df.columns.tolist())
+print(df['Balance'].unique())
+
+df.columns = df.iloc[0]
+df = df[1:].reset_index(drop=True)
+
+
+print(df.head())
+
+# Convert Age to numeric (just in case)
+df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
+
+# Average age
+print("Average age:", df['Age'].mean())
+
+# Unique cities
+print("Cities:", df['City'].unique())
+
